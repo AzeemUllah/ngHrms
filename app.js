@@ -11,7 +11,8 @@ admin.initializeApp({
   databaseURL: 'https://au-hrms.firebaseio.com'
 });
 // Get our API routes
-const api = require('./routes/api');
+const login = require('./routes/login');
+const user = require('./routes/user');
 
 const app = express();
 
@@ -25,7 +26,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'views')));
 
 // Set our api routes
-app.use('/api', api);
+app.use('/api/login', login);
+app.use('/api/user', user);
 
 // Catch all other routes and return the index file
 app.get('*', function(req, res) {
