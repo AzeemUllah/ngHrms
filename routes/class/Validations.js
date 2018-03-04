@@ -50,5 +50,19 @@ class Validations {
     return sumOfErrors;
   }
 
+  isValidlogin(email,password){
+    var sumOfErrors = "";
+
+    if(!(this.validator.isEmail(email+''))){
+      sumOfErrors +=  "Not a valid email. ";
+    }
+
+    if((this.validator.isEmpty(password+''))){
+      sumOfErrors +=  "Password can't be empty. ";
+    }
+
+    return sumOfErrors;
+  }
+
 }
 module.exports = Validations;

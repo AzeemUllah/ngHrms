@@ -9,6 +9,10 @@ import { RouterModule} from '@angular/router';
 import {LoginComponent} from "./login/login.component";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 
+import { FormsModule } from '@angular/forms';
+import {LoginService} from "./login/login.service";
+import {HttpClientModule} from "@angular/common/http";
+
 @NgModule({
   declarations: [
     AppComponent
@@ -17,6 +21,8 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
     BrowserModule,
     LoginModule,
     DashboardModule,
+    FormsModule,
+    HttpClientModule,
     RouterModule.forRoot([
       { path: 'login', component: LoginComponent },
       { path: 'dashboard', component: DashboardComponent },
@@ -24,7 +30,7 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
       { path: '**', redirectTo: 'login', pathMatch: 'full'}
     ])
   ],
-  providers: [],
+  providers: [LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

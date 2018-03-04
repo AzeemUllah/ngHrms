@@ -63,19 +63,7 @@ class User{
 
 
 
-  logIn(email,password,callback){
-    var that = this;
-    this.userRef.once("value", function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        if(childSnapshot.child("email").val() == email) {
-          if(that.bcrypt.compareSync(password, childSnapshot.child("password").val())){
-            callabck(snapshot.key);
-          }
-        }
-      });
-      callback("");
-    });
-  }
+
 
 }
 module.exports = User;

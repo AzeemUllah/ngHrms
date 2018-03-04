@@ -93,6 +93,9 @@ var dashboard_module_1 = __webpack_require__("../../../../../src/app/dashboard/d
 var router_1 = __webpack_require__("../../../router/esm5/router.js");
 var login_component_1 = __webpack_require__("../../../../../src/app/login/login.component.ts");
 var dashboard_component_1 = __webpack_require__("../../../../../src/app/dashboard/dashboard.component.ts");
+var forms_1 = __webpack_require__("../../../forms/esm5/forms.js");
+var login_service_1 = __webpack_require__("../../../../../src/app/login/login.service.ts");
+var http_1 = __webpack_require__("../../../common/esm5/http.js");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -105,6 +108,8 @@ var AppModule = /** @class */ (function () {
                 platform_browser_1.BrowserModule,
                 login_module_1.LoginModule,
                 dashboard_module_1.DashboardModule,
+                forms_1.FormsModule,
+                http_1.HttpClientModule,
                 router_1.RouterModule.forRoot([
                     { path: 'login', component: login_component_1.LoginComponent },
                     { path: 'dashboard', component: dashboard_component_1.DashboardComponent },
@@ -112,7 +117,7 @@ var AppModule = /** @class */ (function () {
                     { path: '**', redirectTo: 'login', pathMatch: 'full' }
                 ])
             ],
-            providers: [],
+            providers: [login_service_1.LoginService],
             bootstrap: [app_component_1.AppComponent]
         })
     ], AppModule);
@@ -429,7 +434,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/login/login.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-wrapper\">\n  <div class=\"account-page\">\n    <div class=\"container\">\n      <h3 class=\"account-title\">Management Login</h3>\n      <div class=\"account-box\">\n        <div class=\"account-wrapper\">\n          <div class=\"account-logo\">\n            <a href=\"#\"><img src=\"./../../assets/images/logo2.png\" alt=\"Focus Technologies\"></a>\n          </div>\n          <form>\n            <div class=\"form-group form-focus\">\n              <label class=\"control-label\">Username or Email</label>\n              <input id=\"email\" class=\"form-control floating\" type=\"text\">\n            </div>\n            <div class=\"form-group form-focus\">\n              <label class=\"control-label\">Password</label>\n              <input password=\"password\" class=\"form-control floating\" type=\"password\">\n            </div>\n            <div class=\"form-group text-center\">\n              <button class=\"btn btn-primary btn-block account-btn\" type=\"button\">Login</button>\n            </div>\n            <div class=\"text-center\">\n              <a href=\"forgot-password.html\">Forgot your password?</a>\n            </div>\n          </form>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n"
+module.exports = "<div class=\"main-wrapper\">\n  <div class=\"account-page\">\n    <div class=\"container\">\n      <h3 class=\"account-title\">Management Login</h3>\n      <div class=\"account-box\">\n        <div class=\"account-wrapper\">\n          <div class=\"account-logo\">\n            <a href=\"\"><img src=\"./../../assets/images/logo2.png\" alt=\"AU-HRMS\"></a>\n          </div>\n          <form>\n            <div class=\"form-group form-focus\">\n              <label class=\"control-label\">Email</label>\n              <input id=\"email\" class=\"form-control floating\"  [(ngModel)]=\"email\" name=\"email\" type=\"text\">\n            </div>\n            <div class=\"form-group form-focus\">\n              <label class=\"control-label\">Password</label>\n              <input password=\"password\" class=\"form-control floating\" [(ngModel)]=\"password\" name=\"password\" type=\"password\">\n            </div>\n            <div class=\"form-group text-center\">\n              <button class=\"btn btn-primary btn-block account-btn\" type=\"button\" (click)=\"submit()\" >Login</button>\n            </div>\n            <div class=\"text-center\">\n              <a href=\"forgot-password.html\">Forgot your password?</a>\n            </div>\n          </form>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -449,10 +454,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var login_service_1 = __webpack_require__("../../../../../src/app/login/login.service.ts");
+var router_1 = __webpack_require__("../../../router/esm5/router.js");
 var LoginComponent = /** @class */ (function () {
-    function LoginComponent() {
+    function LoginComponent(_loginService, _router) {
+        this._loginService = _loginService;
+        this._router = _router;
+        this.email = '';
+        this.password = '';
+        this.isLogin = false;
+        this.loginSucessful = false;
     }
     LoginComponent.prototype.ngOnInit = function () {
+        this.isLogin = this._loginService.isLogin;
+        if (this.isLogin) {
+            this._router.navigateByUrl('/dashboard');
+        }
+    };
+    LoginComponent.prototype.submit = function () {
+        this.loginSucessful = this._loginService.signin(this.email, this.password);
+        alert(this.email + " / " + this.password);
     };
     LoginComponent = __decorate([
         core_1.Component({
@@ -460,7 +481,7 @@ var LoginComponent = /** @class */ (function () {
             template: __webpack_require__("../../../../../src/app/login/login.component.html"),
             styles: [__webpack_require__("../../../../../src/app/login/login.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [login_service_1.LoginService, router_1.Router])
     ], LoginComponent);
     return LoginComponent;
 }());
@@ -484,20 +505,69 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__("../../../core/esm5/core.js");
 var common_1 = __webpack_require__("../../../common/esm5/common.js");
 var login_component_1 = __webpack_require__("../../../../../src/app/login/login.component.ts");
+var forms_1 = __webpack_require__("../../../forms/esm5/forms.js");
 var LoginModule = /** @class */ (function () {
     function LoginModule() {
     }
     LoginModule = __decorate([
         core_1.NgModule({
             imports: [
-                common_1.CommonModule
+                common_1.CommonModule,
+                forms_1.FormsModule
             ],
-            declarations: [login_component_1.LoginComponent]
+            declarations: [login_component_1.LoginComponent],
+            providers: []
         })
     ], LoginModule);
     return LoginModule;
 }());
 exports.LoginModule = LoginModule;
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/login/login.service.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__("../../../core/esm5/core.js");
+var http_1 = __webpack_require__("../../../common/esm5/http.js");
+var LoginService = /** @class */ (function () {
+    function LoginService(_http) {
+        this._http = _http;
+        this.isLogin = false;
+        this.uid = null;
+    }
+    LoginService.prototype.signin = function (email, password) {
+        this._http.post("http://localhost:3000/api/login", {
+            email: email,
+            password: password
+        }).subscribe(function (data) {
+            console.log(data);
+            //TODO: Check response, act accordingly in component. Or maybe return whole json by using observable
+        }, function (error) {
+            console.log(error);
+        });
+        return false;
+    };
+    LoginService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [http_1.HttpClient])
+    ], LoginService);
+    return LoginService;
+}());
+exports.LoginService = LoginService;
 
 
 /***/ }),
